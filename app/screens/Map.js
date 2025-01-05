@@ -48,7 +48,9 @@ const Map = ({
   isLocationServicesEnabled,
   locationTrackingServicesEnabled,
   regions,
+  machines
 }) => {
+  console.log(machines)
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const cameraRef = useRef(null);
@@ -400,21 +402,53 @@ const Map = ({
           />
         )}
       </Pressable>
-      {filterApplied ? (
+      <View
+        style={[
+          {
+            top: topMargin + 110, // Insane??? why cant we use
+            flexDirection: "row",
+            flexWrap: "wrap",
+            justifyContent: "flex-start",
+            paddingRight: 10,
+            // backgroundColor: "#ff0000"
+          },
+          s.filterContainer,
+          s.containerStyle,
+        ]}
+      >
+      {
+        machineId &&
         <Button
-          title={"Filter"}
+          title={"Ace High"}
           onPress={() => dispatch(clearFilters(true))}
-          containerStyle={[
-            { top: topMargin + 110 },
-            s.filterContainer,
-            s.containerStyle,
-          ]}
+          // containerStyle={[
+          //   { top: topMargin + 110 }, // Insane??? why cant we use
+          //   s.filterContainer,
+          //   s.containerStyle,
+          // ]}
           buttonStyle={s.buttonStyle}
           titleStyle={s.filterTitleStyle}
           iconLeft
           icon={<Ionicons name="close-circle" style={s.closeIcon} />}
         />
-      ) : null}
+      }
+        {
+          locationType &&
+          <Button
+            title={"Arcade"}
+            onPress={() => dispatch(clearFilters(true))}
+            // containerStyle={[
+            //   { top: topMargin + 110 },
+            //   s.filterContainer,
+            //   s.containerStyle,
+            // ]}
+            buttonStyle={s.buttonStyle}
+            titleStyle={s.filterTitleStyle}
+            iconLeft
+            icon={<Ionicons name="close-circle" style={s.closeIcon} />}
+          />
+        }
+          </View>
       {showUpdateSearch ? (
         <Pressable
           style={({ pressed }) => [
@@ -562,7 +596,7 @@ const getStyles = (theme) =>
   });
 
 const mapStateToProps = (state) => {
-  const { locations, query, regions, user } = state;
+  const { locations, query, regions, user, machines } = state;
   const selectedLocation = getSelectedMapLocation(state);
   const numLocations = locations.mapLocations.length;
   const { locationTrackingServicesEnabled, isLocationServicesEnabled } = user;
@@ -575,6 +609,7 @@ const mapStateToProps = (state) => {
     numLocations,
     isLocationServicesEnabled,
     locationTrackingServicesEnabled,
+    machines
   };
 };
 
