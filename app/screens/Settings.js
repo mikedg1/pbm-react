@@ -4,12 +4,16 @@ import { StyleSheet, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { connect } from "react-redux";
 import { ThemeContext } from "../theme-context";
-import { Screen, ButtonGroupSetting } from "../components";
+import { Screen, ButtonGroupSetting, SwitchSetting } from "../components";
 import { retrieveItem } from "../config/utils";
-import { setUnitPreference } from "../actions";
+import { setInsiderConnectedBadgeDisplay, setUnitPreference } from "../actions";
 import { KEY_THEME, THEME_DEFAULT_VALUE } from "../utils/constants";
 
-const Settings = ({ user, setUnitPreference }) => {
+const Settings = ({
+  user,
+  setUnitPreference,
+  setDisplayInsiderConnectedBadge,
+}) => {
   const { setThemePreference, theme } = useContext(ThemeContext);
   const s = getStyles(theme);
 
@@ -33,16 +37,27 @@ const Settings = ({ user, setUnitPreference }) => {
     setUnitPreference(idx);
   };
 
+  const updateInsiderConnectedBadgeChange = (newSelectedValue) => {
+    setDisplayInsiderConnectedBadge(newSelectedValue);
+  };
+
   return (
     <Screen>
       <View style={s.background}>
+        <SwitchSetting
+          title="Insider Connected Badge"
+          description={
+            "Show Insider Connected badge on the location details screen."
+          }
+          onValueChange={updateInsiderConnectedBadgeChange}
+          value={user.displayInsiderConnectedBadgePreference}
+        />
         <ButtonGroupSetting
           title="App Theme"
           buttons={["OS Theme", "Light", "Dark"]}
           description="Choose the theme to use for the app."
           onPress={updateThemePref}
           selectedIndex={selectedTheme}
-          s={s}
         />
         <ButtonGroupSetting
           title="Distance Unit"
@@ -70,11 +85,17 @@ Settings.propTypes = {
   navigation: PropTypes.object,
   user: PropTypes.object,
   setUnitPreference: PropTypes.func,
+  setDisplayInsiderConnectedBadge: PropTypes.func,
 };
 
 const mapStateToProps = ({ user }) => ({ user });
 const mapDispatchToProps = (dispatch) => ({
   setUnitPreference: (unitPreference) =>
     dispatch(setUnitPreference(unitPreference)),
+  setDisplayInsiderConnectedBadge: (displayInsiderConnectedBadgePreference) => {
+    return dispatch(
+      setInsiderConnectedBadgeDisplay(displayInsiderConnectedBadgePreference),
+    );
+  },
 });
 export default connect(mapStateToProps, mapDispatchToProps)(Settings);
